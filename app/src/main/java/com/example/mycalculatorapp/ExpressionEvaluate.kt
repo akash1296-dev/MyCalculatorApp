@@ -1,6 +1,7 @@
 package com.example.mycalculatorapp
 
 import kotlinx.android.synthetic.main.activity_main.*
+import org.w3c.dom.Text
 import java.lang.UnsupportedOperationException
 import java.util.*
 
@@ -13,17 +14,26 @@ class ExpressionEvaluate {
         println("exp size is ${exp.indices}")
         for (i in exp.indices) {
 
-            //println("${exp[i]} ${exp[i].toString().toInt()}")
+            //condition for checking number
             if (exp[i] in '0'..'9') {
-                //println("expis is $")
                 od.push(exp[i].toString().toInt())
                 val a : Int = od.peek()
-                //println("a is $a")
-            } else if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
+            }
+            //condition for checking operator
+            else if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
+                //checking precedence of operator
                 while (!(op.empty()) && hasPrecedence(exp[i], op.peek()))
                     od.push(applyOp(op.pop(), od.pop(), od.pop()))
 
                 op.push(exp[i])
+            } else if (exp[i] == '(') {
+                op.push(exp[i])
+            } else if (exp[i] == ')') {
+                while (op.peek() != '(') {
+                    od.push(applyOp(op.pop(),od.pop(),od.pop()))
+                }
+                val x = op.pop()
+                println("last popped operator is $x")
             }
         } // endof For loop
 
@@ -38,7 +48,7 @@ class ExpressionEvaluate {
         println("a is $a and b is $b")
         when (op) {
             '+' -> //println("a is $a and b is $b")
-                    return a + b
+                return a + b
             '-' -> return a - b
             '*' -> return a * b
             '/' -> {
@@ -56,6 +66,8 @@ class ExpressionEvaluate {
         else if ((op1 == '+') && (op2 == '+'))
             return false
         else if ((op1 == '-') && (op2 == '-'))
+            return false
+        else if ( (op1 == '+') || (op1 == '-') || (op1 == '/') || (op1 == '*') && (op2 == '('))
             return false
         return true
     }

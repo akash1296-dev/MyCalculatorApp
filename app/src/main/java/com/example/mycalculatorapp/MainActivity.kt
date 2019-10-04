@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+
         ivDelete.setOnClickListener {
             val res = tvExpression.text.toString()
             if (res.isNotEmpty()) {
